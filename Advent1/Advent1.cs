@@ -6,8 +6,19 @@ using System.Threading.Tasks;
 
 namespace Advent2023
 {
-    internal class Advent1
+    public class Advent1
     {
+
+
+        public static List<string> ArrayToList(string[] strList)
+        {
+            List<string> list = new List<string>();
+            foreach (string str in strList)
+            {
+                list.Add(str);
+            }
+            return list;
+        }
 
         public void main()
         {
@@ -33,16 +44,6 @@ namespace Advent2023
                 line = sr.ReadLine();
             }
             sr.Close();
-
-            List<string> ArrayToList(string[] strList)
-            {
-                List<string> list = new List<string>();
-                foreach (string str in strList)
-                {
-                    list.Add(str);
-                }
-                return list;
-            }
 
             List<string> SplitList(string str)
             {
