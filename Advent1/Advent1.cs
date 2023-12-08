@@ -113,7 +113,7 @@ namespace Advent2023
                 {
                     total += int.Parse(value);
                 }
-                Console.WriteLine("Task 1: " + total);
+                Console.WriteLine("Day 1 Task 1: " + total);
             }
 
             void Task2()
@@ -171,7 +171,7 @@ namespace Advent2023
                     totalsA.Add(total);
                     //Console.WriteLine(value+ "     Total: "+ total);
                 }
-                Console.WriteLine("Task 2: " + total);
+                Console.WriteLine("Day 1 Task 2: " + total);
             }
 
             Task1();

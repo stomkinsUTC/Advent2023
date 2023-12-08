@@ -29,11 +29,20 @@ namespace Advent2023
                 gameList[i].setDetails(inputData[i]);
             }
 
+            int task1Total = 0;
+            int task2Total = 0;
             foreach (ad2Game game in gameList)
             {
-                //NEED TO CHECK THE NUMBERS INSTEAD OF PRINTING THIS HERE
-                Console.WriteLine(game.green);
+                //game.displayDetails();
+                if (game.maxRed <= 12 && game.maxGreen <= 13 && game.maxBlue <= 14)
+                {
+                    //Console.WriteLine(game.gameID + ": possible");
+                    task1Total += game.gameID;
+                }
+                task2Total += (game.maxRed * game.maxBlue * game.maxGreen);
             }
+            Console.WriteLine("Day 2 Task 1: " + task1Total);
+            Console.WriteLine("Day 2 Task 2: " + task2Total);
         }
     }
 
@@ -43,6 +52,9 @@ namespace Advent2023
         public int blue = 0;
         public int red = 0;
         public int green = 0;
+        public int maxBlue = 0;
+        public int maxRed = 0;
+        public int maxGreen = 0;
 
         public void setDetails(string input)
         {
@@ -63,17 +75,35 @@ namespace Advent2023
                     if (tempColour == "blue")
                     {
                         blue += tempCount;
+                        if (tempCount > maxBlue)
+                        {
+                            maxBlue = tempCount;
+                        }
                     }
                     else if (tempColour == "red")
                     {
                         red += tempCount;
+                        if (tempCount > maxRed)
+                        {
+                            maxRed = tempCount;
+                        }
                     }
                     else
                     {
                         green += tempCount;
+                        if (tempCount > maxGreen)
+                        {
+                            maxGreen = tempCount;
+                        }
+
                     }
                 }
             }
+        }
+
+        public void displayDetails()
+        {
+            Console.WriteLine("Game: " + gameID + "     Blue: " + maxBlue + "     Red: " + maxRed + "     Green: " + maxGreen);
         }
     }
 }
