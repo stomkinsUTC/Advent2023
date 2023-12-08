@@ -16,6 +16,11 @@ namespace Advent2023
             List<string> valueList2 = new List<string>();
             List<string> formattedList = new List<string>();
 
+            List<int> ints = new List<int>();
+
+            List<int> totalsA = new List<int>();
+            List<int> totalsB = new List<int>();
+
             //Getting the data from the file
             String line;
             StreamReader sr = new StreamReader("..\\advent1.txt");
@@ -114,7 +119,12 @@ namespace Advent2023
             {
                 foreach (string input in inputList)
                 {
-                    string tempstr = input.Replace("one", "1")
+                    string tempstr = input
+                        .Replace("sevenine", "sevennine")
+                        .Replace("eightwo", "eighttwo")
+                        .Replace("oneight", "oneeight")
+                        .Replace("twone", "twoone")
+                        .Replace("one", "1")
                         .Replace("two", "2")
                         .Replace("three", "3")
                         .Replace("four", "4")
@@ -157,52 +167,15 @@ namespace Advent2023
                 foreach (string value in valueList2)
                 {
                     total += int.Parse(value);
+                    totalsA.Add(total);
                     //Console.WriteLine(value+ "     Total: "+ total);
                 }
                 Console.WriteLine("Task 2: " + total);
             }
 
-            void Task2Alt()
-            {
-                int globalCount = 0;
-                foreach (var line in inputList)
-                {
-                    var ints = new List<int>();
-
-                    for (var i = 0; i < line.Length; i++)
-                    {
-                        var curr = line[i..];
-                        if (curr.StartsWith("one") || curr.StartsWith("1"))
-                            ints.Add(1);
-                        else if (curr.StartsWith("two") || curr.StartsWith("2"))
-                            ints.Add(2);
-                        else if (curr.StartsWith("three") || curr.StartsWith("3"))
-                            ints.Add(3);
-                        else if (curr.StartsWith("four") || curr.StartsWith("4"))
-                            ints.Add(4);
-                        else if (curr.StartsWith("five") || curr.StartsWith("5"))
-                            ints.Add(5);
-                        else if (curr.StartsWith("six") || curr.StartsWith("6"))
-                            ints.Add(6);
-                        else if (curr.StartsWith("seven") || curr.StartsWith("7"))
-                            ints.Add(7);
-                        else if (curr.StartsWith("eight") || curr.StartsWith("8"))
-                            ints.Add(8);
-                        else if (curr.StartsWith("nine") || curr.StartsWith("9"))
-                            ints.Add(9);
-                    }
-
-                    if (ints.Count == 1)
-                        globalCount += ints[0] * 10 + ints[0];
-                    else
-                        globalCount += ints[0] * 10 + ints.Last();
-                }
-                Console.WriteLine("Task 2: " + globalCount);
-            }
-
             Task1();
-            //Task2();
-            Task2Alt();
+            Task2();
+
             Console.ReadLine();
         }
     }
