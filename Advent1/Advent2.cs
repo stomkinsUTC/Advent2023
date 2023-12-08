@@ -28,15 +28,21 @@ namespace Advent2023
             {
                 gameList[i].setDetails(inputData[i]);
             }
+
+            foreach (ad2Game game in gameList)
+            {
+                //NEED TO CHECK THE NUMBERS INSTEAD OF PRINTING THIS HERE
+                Console.WriteLine(game.green);
+            }
         }
     }
 
     internal class ad2Game
     {
         public int gameID;
-        public int blue;
-        public int red;
-        public int green;
+        public int blue = 0;
+        public int red = 0;
+        public int green = 0;
 
         public void setDetails(string input)
         {
@@ -48,8 +54,26 @@ namespace Advent2023
                 splitInfo.Add(Advent1.ArrayToList(game.Split(",")));
             }
 
-            Console.WriteLine(splitInfo[0][0]);
-            //Keep splitting here
+            foreach (List<string> colourData in splitInfo)
+            {
+                foreach (string colour in colourData)
+                {
+                    int tempCount = int.Parse(colour.Split()[1]);
+                    string tempColour = colour.Split(" ")[2];
+                    if (tempColour == "blue")
+                    {
+                        blue += tempCount;
+                    }
+                    else if (tempColour == "red")
+                    {
+                        red += tempCount;
+                    }
+                    else
+                    {
+                        green += tempCount;
+                    }
+                }
+            }
         }
     }
 }
