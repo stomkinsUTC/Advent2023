@@ -8,5 +8,8 @@ using System.Text.RegularExpressions;
 //Advent2 advent2 = new Advent2();
 //advent2.main();
 
-Advent3 advent3 = new Advent3();
-advent3.main();
+//Advent3 advent3 = new Advent3();
+//advent3.main();
+
+Advent4 advent4 = new Advent4();
+advent4.main();
