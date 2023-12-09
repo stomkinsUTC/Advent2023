@@ -11,5 +11,8 @@ using System.Text.RegularExpressions;
 //Advent3 advent3 = new Advent3();
 //advent3.main();
 
-Advent4 advent4 = new Advent4();
-advent4.main();
+//Advent4 advent4 = new Advent4();
+//advent4.main();
+
+Advent5 advent5 = new Advent5();
+advent5.main();
