@@ -24,8 +24,8 @@ namespace Advent2023
         List<Conversion> temperatureToHumidity = new List<Conversion>();
         List<Conversion> humidityToLocation = new List<Conversion>();
 
-        public bool firstRangeSet = false;
-        public long minRangeLocation = 0;
+        //public bool firstRangeSet = false;
+        public long minRangeLocation = 999999999999999;
 
         public void main()
         {
@@ -91,18 +91,12 @@ namespace Advent2023
                     //THIS IS THE RAM KILLER, NEED TO FIND A WAY TO OPTIMISE THIS.
                     for (long j = value; j < value + range; j++)
                     {
-                        if (!firstRangeSet)
+                        if (checkSeedLocation(j) < minRangeLocation)
                         {
                             minRangeLocation = checkSeedLocation(j);
                         }
-                        else
-                        {
-                            if (checkSeedLocation(j) < minRangeLocation)
-                            {
-                                minRangeLocation = checkSeedLocation(j);
-                            }
-                        }
-                        rangeSeeds.Add(j);
+                        
+                        //rangeSeeds.Add(j);
                     }
                 }
 
