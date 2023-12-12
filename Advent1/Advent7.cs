@@ -11,6 +11,9 @@ namespace Advent2023
         List<string> inputData = new List<string>();
         List <camelCard> cardData = new List<camelCard> ();
         Char[] cardRanking = { 'A', 'K', 'Q', 'J', 'T', '9', '8', '7', '6', '5', '4', '3', '2'};
+        List<string> stringRanks = new List<string>{ "A", "K", "Q", "J", "T", "9", "8", "7", "6", "5", "4", "3", "2" };
+
+        public List<List<camelCard>> rankedCards = new List<List<camelCard>>();
 
         public void main()
         {
@@ -29,19 +32,52 @@ namespace Advent2023
             {
                 cardData.Add(new camelCard(data.Split(" ")[0], int.Parse(data.Split(" ")[1])));
             }
-            cardData = cardData.OrderBy(cc => cc.type).ToList();
+            //cardData = cardData.OrderBy(cc => cc.type).ToList();
+            splitCamelCards();
+            rankCamelCards();
+
+            foreach (List<camelCard> cc in rankedCards)
+            {
+                foreach (camelCard c in cc)
+                {
+                    Console.WriteLine(c.card + ", Type: " + c.type);
+                }
+            }
+
+        }
+
+        public void splitCamelCards()
+        {
+            for (int i = 0; i < 7; i++)
+            {
+                rankedCards.Add(new List<camelCard>());
+            }
             foreach (camelCard card in cardData)
             {
-                Console.WriteLine(card.type);
+                rankedCards[7 - card.type].Add(card);
+            }    
+        }
 
-                /*Make a list of all hands of each type number.
-                 Generate an index value of each card from the cardRanking array
-                If equal, check next char, if not, higher wins, set rank number.
-                Rank number is total count of all higher ranks + current position?
-                Combine lists at the end.*/
+        public void rankCamelCards()
+        {
+            List<List<camelCard>> tempList = new List<List<camelCard>>();
+            foreach (List<camelCard> camelList in rankedCards)
+            {
+                if (camelList.Count > 1)
+                {
+                    tempList.Add(camelList.OrderBy(card => stringRanks.IndexOf(card.card)).ToList());
+                    //THIS DOESN'T WORK
+                }
+                else if (camelList.Count > 0)
+                {
+                    tempList.Add(camelList);
+                }
             }
+            rankedCards = tempList;
         }
     }
+
+
 
     internal class camelCard
     {
