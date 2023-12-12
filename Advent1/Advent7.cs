@@ -14,12 +14,13 @@ namespace Advent2023
         List<string> stringRanks = new List<string>{ "A", "K", "Q", "J", "T", "9", "8", "7", "6", "5", "4", "3", "2" };
 
         public List<List<camelCard>> rankedCards = new List<List<camelCard>>();
+        public List<camelCard> orderedList = new List<camelCard>();
 
         public void main()
         {
             //Getting the data from the file
             String line;
-            StreamReader sr = new StreamReader("..\\advent7TEST.txt");
+            StreamReader sr = new StreamReader("..\\advent7.txt");
             line = sr.ReadLine();
             while (line != null)
             {
@@ -32,18 +33,27 @@ namespace Advent2023
             {
                 cardData.Add(new camelCard(data.Split(" ")[0], int.Parse(data.Split(" ")[1])));
             }
-            //cardData = cardData.OrderBy(cc => cc.type).ToList();
+
+
             splitCamelCards();
             rankCamelCards();
 
+            int task1Total = 0;
+            int rank = rankedCards.SelectMany(list => list).Distinct().Count();
+            Console.WriteLine(rank);
             foreach (List<camelCard> cc in rankedCards)
             {
                 foreach (camelCard c in cc)
                 {
-                    Console.WriteLine(c.card + ", Type: " + c.type);
+                    c.rank = rank;
+                    rank--;
+                    orderedList.Add(c);
+                    task1Total += (c.rank * c.bet);
+                    //Console.WriteLine(c.card + ", Type: " + c.type);
                 }
             }
 
+            Console.WriteLine("Day 7 Task 1: " + task1Total);
         }
 
         public void splitCamelCards()
@@ -65,8 +75,8 @@ namespace Advent2023
             {
                 if (camelList.Count > 1)
                 {
-                    tempList.Add(camelList.OrderBy(card => stringRanks.IndexOf(card.card)).ToList());
-                    //THIS DOESN'T WORK
+                    tempList.Add(camelList.OrderBy(card => stringRanks.IndexOf(card.card[0].ToString())).ToList());
+                    /*Need to find a way to check each character one at a time here.*/
                 }
                 else if (camelList.Count > 0)
                 {
