@@ -10,6 +10,7 @@ namespace Advent2023
     {
         List<string> inputData = new List<string>();
         List <camelCard> cardData = new List<camelCard> ();
+        List<camelCard> task2Data = new List<camelCard>();
         List<string> stringRanks = new List<string>{ "A", "K", "Q", "J", "T", "9", "8", "7", "6", "5", "4", "3", "2" };
         List<string> task2Ranks = new List<string> { "A", "K", "Q", "T", "9", "8", "7", "6", "5", "4", "3", "2", "J" };
 
@@ -23,7 +24,7 @@ namespace Advent2023
         {
             //Getting the data from the file
             String line;
-            StreamReader sr = new StreamReader("..\\advent7TEST.txt");
+            StreamReader sr = new StreamReader("..\\advent7.txt");
             line = sr.ReadLine();
             while (line != null)
             {
@@ -35,10 +36,11 @@ namespace Advent2023
             foreach (string data in inputData)
             {
                 cardData.Add(new camelCard(data.Split(" ")[0], int.Parse(data.Split(" ")[1])));
+                task2Data.Add(new camelCard(data.Split(" ")[0], int.Parse(data.Split(" ")[1]), true));
             }
 
 
-            /*SplitCamelCards();
+            SplitCamelCards();
             RankCamelCards();
 
             int task1Total = 0;
@@ -54,7 +56,7 @@ namespace Advent2023
                 }
             }
 
-            Console.WriteLine("Day 7 Task 1: " + task1Total);*/
+            Console.WriteLine("Day 7 Task 1: " + task1Total);
 
             SplitCamelCardsTask2();
             RankCamelCardsTask2();
@@ -75,14 +77,14 @@ namespace Advent2023
 
             Console.WriteLine("Day 7 Task 2: " + task2Total);
 
-            foreach (List<camelCard> cc in task2Ranked)
+            /*foreach (List<camelCard> cc in task2Ranked)
             {
                 foreach (camelCard card in cc)
                 {
                     //Console.WriteLine(card.card[0].ToString() + card.card[1].ToString() + card.card[2].ToString() + card.card[3].ToString() + card.card[4].ToString());
                     Console.WriteLine(card.cardString + ", Type: " + card.type + ", Sorted: " + card.sortingString + ", Adjusted: " + card.task2String + ", Rank: " + card.rank);
                 }
-            }
+            }*/
         }
 
         public void SplitCamelCards()
@@ -124,9 +126,9 @@ namespace Advent2023
             {
                 task2Ranked.Add(new List<camelCard>());
             }
-            foreach (camelCard card in cardData)
+            foreach (camelCard card in task2Data)
             {
-                task2Ranked[7 - card.type].Add(new camelCard(card.cardString, card.bet, true));
+                task2Ranked[7 - card.type].Add(card);
             }
         }
 
@@ -192,9 +194,8 @@ namespace Advent2023
                 card[i] = task2Indexes.IndexOf(c[i].ToString());
             }
             cardString = c;
-            sortingString = (sortVals[14 - card[0]] + sortVals[14 - card[1]] + sortVals[14 - card[2]] + sortVals[14 - card[3]] + sortVals[14 - card[4]]);
+            //sortingString = (sortVals[14 - card[0]] + sortVals[14 - card[1]] + sortVals[14 - card[2]] + sortVals[14 - card[3]] + sortVals[14 - card[4]]);
             bet = b;
-            //this.CalculateTypeTask2(true);
             foreach (int i in card)
             {
                 task2Counts[14 - i]++;
@@ -211,6 +212,16 @@ namespace Advent2023
                 }
                 else
                 {
+                    /*int checkedCards = 1;
+                    while (checkedCards < 4 && task2Indexes[14 - maxIndex] == "J")
+                    {
+                        maxIndex = (from number in task2Counts
+                                    orderby number descending
+                                    select number).Skip(checkedCards).First();
+                        checkedCards++;
+                        Console.WriteLine("maxIndex: " + maxIndex);
+                    }*/
+
                     tempStr.Insert(0, task2Indexes[14-maxIndex]);
                 }
                 
@@ -218,7 +229,7 @@ namespace Advent2023
             task2String = tempStr.ToString();
             for (int i = 0; i < task2String.Length; i++)
             {
-                card[i] = task2Indexes.IndexOf(task2String[i].ToString());
+                card[i] = task2Indexes.IndexOf(cardString[i].ToString());
             }
             sortingString = (sortVals[14 - card[0]] + sortVals[14 - card[1]] + sortVals[14 - card[2]] + sortVals[14 - card[3]] + sortVals[14 - card[4]]);
             this.CalculateTypeTask2();
@@ -285,15 +296,39 @@ namespace Advent2023
             }
             else if (task2Counts.Contains(4))
             {
-                type = 6;
+                int count = cardString.Count(f => f == 'J');
+                if (count == 0)
+                {
+                    type = 6;
+                }
+                else
+                {
+                    type = 7;
+                }
             }
             else if (task2Counts.Contains(3) && task2Counts.Contains(2))
             {
-                type = 5;
+                int count = cardString.Count(f => f == 'J');
+                if (count == 2 || count == 3)
+                {
+                    type = 7;
+                }
+                else
+                {
+                    type = 5;
+                }
             }
             else if (task2Counts.Contains(3))
             {
-                type = 4;
+                int count = cardString.Count(f => f == 'J');
+                if (count == 3 || count == 1)
+                {
+                    type = 6;
+                }
+                else
+                {
+                    type = 4;
+                }
             }
             else if (task2Counts.Contains(2))
             {
@@ -307,57 +342,26 @@ namespace Advent2023
                 }
                 if (pairCount == 2)
                 {
-                    type = 3;
+                    int count = cardString.Count(f => f == 'J');
+                    if (count == 1)
+                    {
+                        type = 5;
+                    }
+                    else if (count == 2)
+                    {
+                        type = 6;
+                    }
+                    else
+                    {
+                        type = 3;
+                    }
                 }
                 else
                 {
-                    type = 2;
-                }
-            }
-        }
-
-        /*public void CalculateTypeTask2(int[] listToCheck)
-        {
-            foreach (int i in task2Counts)
-            {
-                task2Counts[i] = 0;
-            }
-            foreach (int c in card)
-            {
-                task2Counts[14 - c]++;
-            }
-
-            if (!firstPass)
-            {
-                if (tempList.Contains(5))
-                {
-                    type = 7;
-                }
-                else if (tempList.Contains(4))
-                {
-                    type = 6;
-                }
-                else if (tempList.Contains(3) && tempList.Contains(2))
-                {
-                    type = 5;
-                }
-                else if (tempList.Contains(3))
-                {
-                    type = 4;
-                }
-                else if (tempList.Contains(2))
-                {
-                    int pairCount = 0;
-                    foreach (int i in tempList)
+                    int count = cardString.Count(f => f == 'J');
+                    if (count == 1 || count == 2)
                     {
-                        if (i == 2)
-                        {
-                            pairCount++;
-                        }
-                    }
-                    if (pairCount == 2)
-                    {
-                        type = 3;
+                        type = 4;
                     }
                     else
                     {
@@ -365,7 +369,10 @@ namespace Advent2023
                     }
                 }
             }
-        }*/
+            else if(cardString.Contains("J"))
+            {
+                type = 2;
+            }
+        }
     }
-
 }
