@@ -26,12 +26,27 @@ namespace Advent2023
 
             foreach(string data in inputData)
             {
-                dataDiffs.Add(new dataDifferences(data));
+                List<long> tempData = new List<long>();
+                string[] tempSplit = data.Split(" ");
+                foreach (string s in tempSplit)
+                {
+                    tempData.Add(long.Parse(s));
+                }
+                dataDiffs.Add(new dataDifferences(tempData));
             }
 
-            foreach (dataDifferences diff in dataDiffs)
+            for (int i = 0; i < dataDiffs.Count; i++)
             {
-                Console.WriteLine(diff.diffs.nums[0]);
+                Console.WriteLine("Line: " + i);
+                dataDifferences tempDD = dataDiffs[i];
+                while (tempDD.diffs != null)
+                {
+                    Console.WriteLine("Difference found");
+                    /*Maybe need to add a property to the class here to store the next item.
+                     Next item is the sum of the last difference and the last num.
+                    This should then iterate up to the top level to get the difference.*/
+                    tempDD = tempDD.diffs;
+                }
             }
         }
     }
@@ -41,31 +56,26 @@ namespace Advent2023
         public List<long> nums = new List<long>();
         public dataDifferences diffs;
 
-        public dataDifferences(string inputNums)
+        public dataDifferences(List<long> inputNums)
         {
-            string[] tempSplit = inputNums.Split(" ");
-            foreach (string s in tempSplit)
-            {
-                nums.Add(long.Parse(s));
-            }
+            nums = inputNums;
 
-            List<long> tempDiffs = new List<long>();
-            for (int i = 0; i < nums.Count-1; i++)
+            //If all of the differences aren't equal, recurse down. (I think)
+            if (getDifferences(nums).Distinct().Count() != 1)
             {
-                tempDiffs.Add(Math.Abs(nums[i] - nums[i + 1]));
-            }
-            diffs = new dataDifferences(tempDiffs);
-
-            //If all of the differences aren't equal.
-            if (diffs.nums.Distinct().Count() != 1)
-            {
-                //Need to recurse here but not sure how.
+                diffs = new dataDifferences(getDifferences(nums));
+                diffs.diffs = new dataDifferences(getDifferences(diffs.nums));
             }
         }
 
-        private dataDifferences(List<long> inputNums)
+        public List<long> getDifferences(List<long> inputNums)
         {
-            nums = inputNums;
+            List<long> tempDiffs = new List<long>();
+            for (int i = 0; i < nums.Count - 1; i++)
+            {
+                tempDiffs.Add(Math.Abs(nums[i] - nums[i + 1]));
+            }
+            return tempDiffs;
         }
     }
 }
