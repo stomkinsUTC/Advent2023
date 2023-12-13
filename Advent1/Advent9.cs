@@ -31,7 +31,7 @@ namespace Advent2023
 
             foreach (dataDifferences diff in dataDiffs)
             {
-                Console.WriteLine(diff.diffs.Count);
+                Console.WriteLine(diff.diffs.nums[0]);
             }
         }
     }
@@ -55,9 +55,15 @@ namespace Advent2023
                 tempDiffs.Add(Math.Abs(nums[i] - nums[i + 1]));
             }
             diffs = new dataDifferences(tempDiffs);
+
+            //If all of the differences aren't equal.
+            if (diffs.nums.Distinct().Count() != 1)
+            {
+                //Need to recurse here but not sure how.
+            }
         }
 
-        public dataDifferences(List<long> inputNums)
+        private dataDifferences(List<long> inputNums)
         {
             nums = inputNums;
         }
