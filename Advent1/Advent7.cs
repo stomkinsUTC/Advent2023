@@ -10,17 +10,20 @@ namespace Advent2023
     {
         List<string> inputData = new List<string>();
         List <camelCard> cardData = new List<camelCard> ();
-        Char[] cardRanking = { 'A', 'K', 'Q', 'J', 'T', '9', '8', '7', '6', '5', '4', '3', '2'};
         List<string> stringRanks = new List<string>{ "A", "K", "Q", "J", "T", "9", "8", "7", "6", "5", "4", "3", "2" };
+        List<string> task2Ranks = new List<string> { "A", "K", "Q", "T", "9", "8", "7", "6", "5", "4", "3", "2", "J" };
 
         public List<List<camelCard>> rankedCards = new List<List<camelCard>>();
         public List<camelCard> orderedList = new List<camelCard>();
+
+        public List<List<camelCard>> task2Ranked = new List<List<camelCard>>();
+        public List<camelCard> task2Ordered = new List<camelCard>();
 
         public void main()
         {
             //Getting the data from the file
             String line;
-            StreamReader sr = new StreamReader("..\\advent7.txt");
+            StreamReader sr = new StreamReader("..\\advent7TEST.txt");
             line = sr.ReadLine();
             while (line != null)
             {
@@ -35,12 +38,11 @@ namespace Advent2023
             }
 
 
-            splitCamelCards();
-            rankCamelCards();
+            /*SplitCamelCards();
+            RankCamelCards();
 
             int task1Total = 0;
             int rank = rankedCards.SelectMany(list => list).Distinct().Count();
-            Console.WriteLine(rank);
             foreach (List<camelCard> cc in rankedCards)
             {
                 foreach (camelCard c in cc)
@@ -49,14 +51,41 @@ namespace Advent2023
                     rank--;
                     orderedList.Add(c);
                     task1Total += (c.rank * c.bet);
-                    //Console.WriteLine(c.card + ", Type: " + c.type);
                 }
             }
 
-            Console.WriteLine("Day 7 Task 1: " + task1Total);
+            Console.WriteLine("Day 7 Task 1: " + task1Total);*/
+
+            SplitCamelCardsTask2();
+            RankCamelCardsTask2();
+
+
+            int task2Total = 0;
+            int rank2 = task2Ranked.SelectMany(list => list).Distinct().Count();
+            foreach (List<camelCard> cc in task2Ranked)
+            {
+                foreach (camelCard c in cc)
+                {
+                    c.rank = rank2;
+                    rank2--;
+                    task2Ordered.Add(c);
+                    task2Total += (c.rank * c.bet);
+                }
+            }
+
+            Console.WriteLine("Day 7 Task 2: " + task2Total);
+
+            foreach (List<camelCard> cc in task2Ranked)
+            {
+                foreach (camelCard card in cc)
+                {
+                    //Console.WriteLine(card.card[0].ToString() + card.card[1].ToString() + card.card[2].ToString() + card.card[3].ToString() + card.card[4].ToString());
+                    Console.WriteLine(card.cardString + ", Type: " + card.type + ", Sorted: " + card.sortingString + ", Adjusted: " + card.task2String + ", Rank: " + card.rank);
+                }
+            }
         }
 
-        public void splitCamelCards()
+        public void SplitCamelCards()
         {
             for (int i = 0; i < 7; i++)
             {
@@ -68,7 +97,7 @@ namespace Advent2023
             }    
         }
 
-        public void rankCamelCards()
+        public void RankCamelCards()
         {
             List<List<camelCard>> tempList = new List<List<camelCard>>();
             foreach (List<camelCard> camelList in rankedCards)
@@ -76,14 +105,50 @@ namespace Advent2023
                 if (camelList.Count > 1)
                 {
                     tempList.Add(camelList.OrderBy(card => stringRanks.IndexOf(card.card[0].ToString())).ToList());
-                    /*Need to find a way to check each character one at a time here.*/
                 }
                 else if (camelList.Count > 0)
                 {
                     tempList.Add(camelList);
                 }
             }
+            for (int i = 0; i < tempList.Count; i++)
+            {
+                tempList[i] = tempList[i].OrderBy(rc => rc.sortingString).ToList();
+            }
             rankedCards = tempList;
+        }
+
+        public void SplitCamelCardsTask2()
+        {
+            for (int i = 0; i < 7; i++)
+            {
+                task2Ranked.Add(new List<camelCard>());
+            }
+            foreach (camelCard card in cardData)
+            {
+                task2Ranked[7 - card.type].Add(new camelCard(card.cardString, card.bet, true));
+            }
+        }
+
+        public void RankCamelCardsTask2()
+        {
+            List<List<camelCard>> tempList = new List<List<camelCard>>();
+            foreach (List<camelCard> camelList in task2Ranked)
+            {
+                if (camelList.Count > 1)
+                {
+                    tempList.Add(camelList.OrderBy(card => task2Ranks.IndexOf(card.sortingString)).ToList());
+                }
+                else if (camelList.Count > 0)
+                {
+                    tempList.Add(camelList);
+                }
+            }
+            for (int i = 0; i < tempList.Count; i++)
+            {
+                tempList[i] = tempList[i].OrderBy(rc => rc.sortingString).ToList();
+            }
+            task2Ranked = tempList;
         }
     }
 
@@ -91,69 +156,101 @@ namespace Advent2023
 
     internal class camelCard
     {
-        public string card;
+        public static List<string> cardIndexes =  new List<string>{ "X", "X", "2", "3", "4", "5", "6", "7", "8", "9", "T", "J", "Q", "K", "A" };
+        public static List<string> task2Indexes = new List<string> { "X", "X", "J", "2", "3", "4", "5", "6", "7", "8", "9", "T", "Q", "K", "A" };
+        public static string[] sortVals = { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M" };
+
+                                  //A, K, Q, J, T, 9, 8, 7, 6, 5, 4, 3, 2
+        public int[] cardCounts = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+                                   //A, K, Q, T, 9, 8, 7, 6, 5, 4, 3, 2, J
+        public int[] task2Counts = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+
+        public string cardString = "";
+        public string task2String = "";
+        public string sortingString = "";
+        public List<int> card = new List<int>{0, 0, 0, 0, 0};
         public int bet;
         public int type = 1;
         public int rank = 0;
 
         public camelCard(string c, int b)
         {
-            card = c;
+            for (int i = 0; i < c.Length; i++)
+            {
+                card[i] = cardIndexes.IndexOf(c[i].ToString()) ;
+            }
+            cardString = c;
+            sortingString = (sortVals[14-card[0]] + sortVals[14 - card[1]] + sortVals[14 - card[2]] + sortVals[14 - card[3]] + sortVals[14 - card[4]]);
             bet = b;
             this.CalculateType();
         }
 
-        public void CalculateType()
+        public camelCard(string c, int b, bool task2)
         {
-                         //A, K, Q, J, T, 9, 8, 7, 6, 5, 4, 3, 2
-            int[] cards = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-            foreach (char c in card)
+            for (int i = 0; i < c.Length; i++)
             {
-                if (Char.IsDigit(c))
+                card[i] = task2Indexes.IndexOf(c[i].ToString());
+            }
+            cardString = c;
+            sortingString = (sortVals[14 - card[0]] + sortVals[14 - card[1]] + sortVals[14 - card[2]] + sortVals[14 - card[3]] + sortVals[14 - card[4]]);
+            bet = b;
+            //this.CalculateTypeTask2(true);
+            foreach (int i in card)
+            {
+                task2Counts[14 - i]++;
+            }
+
+            StringBuilder tempStr = new StringBuilder("");
+            int maxValue = task2Counts.Max();
+            int maxIndex = task2Counts.ToList().IndexOf(maxValue);
+            for (int i = cardString.Length - 1; i >= 0 ; i--)
+            {
+                if (cardString[i] != 'J')
                 {
-                    cards[14 - int.Parse(c.ToString())]++;
-                }
-                else if (c == 'A')
-                {
-                    cards[0]++;
-                }
-                else if (c == 'K')
-                {
-                    cards[1]++;
-                }
-                else if (c == 'Q')
-                {
-                    cards[2]++;
-                }
-                else if (c == 'J')
-                {
-                    cards[3]++;
+                    tempStr.Insert(0, cardString[i].ToString());
                 }
                 else
                 {
-                    cards[4]++;
+                    tempStr.Insert(0, task2Indexes[14-maxIndex]);
                 }
+                
             }
-            if (cards.Contains(5))
+            task2String = tempStr.ToString();
+            for (int i = 0; i < task2String.Length; i++)
+            {
+                card[i] = task2Indexes.IndexOf(task2String[i].ToString());
+            }
+            sortingString = (sortVals[14 - card[0]] + sortVals[14 - card[1]] + sortVals[14 - card[2]] + sortVals[14 - card[3]] + sortVals[14 - card[4]]);
+            this.CalculateTypeTask2();
+        }
+
+        public void CalculateType()
+        {
+            foreach (int c in card)
+            {
+                cardCounts[14 - c]++;
+            }
+            
+            if (cardCounts.Contains(5))
             {
                 type = 7;
             }
-            else if (cards.Contains(4))
+            else if (cardCounts.Contains(4))
             {
                 type = 6;
             }
-            else if (cards.Contains(3) && cards.Contains(2))
+            else if (cardCounts.Contains(3) && cardCounts.Contains(2))
             {
                 type = 5;
             }
-            else if (cards.Contains(3))
+            else if (cardCounts.Contains(3))
             {
                 type = 4;
             }
-            else if (cards.Contains(2))
+            else if (cardCounts.Contains(2))
             {
                 int pairCount = 0;
-                foreach (int i in cards)
+                foreach (int i in cardCounts)
                 {
                     if (i == 2)
                     {
@@ -170,6 +267,105 @@ namespace Advent2023
                 }
             }
         }
+
+        public void CalculateTypeTask2()
+        {
+            for (int i = 0; i < task2Counts.Length; i++)
+            {
+                task2Counts[i] = 0;
+            }    
+            foreach (int c in card)
+            {
+                task2Counts[14 - c]++;
+            }
+
+            if (task2Counts.Contains(5))
+            {
+                type = 7;
+            }
+            else if (task2Counts.Contains(4))
+            {
+                type = 6;
+            }
+            else if (task2Counts.Contains(3) && task2Counts.Contains(2))
+            {
+                type = 5;
+            }
+            else if (task2Counts.Contains(3))
+            {
+                type = 4;
+            }
+            else if (task2Counts.Contains(2))
+            {
+                int pairCount = 0;
+                foreach (int i in task2Counts)
+                {
+                    if (i == 2)
+                    {
+                        pairCount++;
+                    }
+                }
+                if (pairCount == 2)
+                {
+                    type = 3;
+                }
+                else
+                {
+                    type = 2;
+                }
+            }
+        }
+
+        /*public void CalculateTypeTask2(int[] listToCheck)
+        {
+            foreach (int i in task2Counts)
+            {
+                task2Counts[i] = 0;
+            }
+            foreach (int c in card)
+            {
+                task2Counts[14 - c]++;
+            }
+
+            if (!firstPass)
+            {
+                if (tempList.Contains(5))
+                {
+                    type = 7;
+                }
+                else if (tempList.Contains(4))
+                {
+                    type = 6;
+                }
+                else if (tempList.Contains(3) && tempList.Contains(2))
+                {
+                    type = 5;
+                }
+                else if (tempList.Contains(3))
+                {
+                    type = 4;
+                }
+                else if (tempList.Contains(2))
+                {
+                    int pairCount = 0;
+                    foreach (int i in tempList)
+                    {
+                        if (i == 2)
+                        {
+                            pairCount++;
+                        }
+                    }
+                    if (pairCount == 2)
+                    {
+                        type = 3;
+                    }
+                    else
+                    {
+                        type = 2;
+                    }
+                }
+            }
+        }*/
     }
 
 }
