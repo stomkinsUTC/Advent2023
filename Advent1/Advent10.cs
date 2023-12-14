@@ -60,6 +60,15 @@ namespace Advent2023
                 stepsTaken++;
             }
             Console.WriteLine("Day 10 Task 1: " + stepsTaken/2);
+
+
+            /*For Task 2, set up a 2D array to store whether each tile is:
+             I - Inside
+             O - Outside
+             P - Pipe
+             If a tile borders an edge and isn't a pipe, it must be O.
+             If a tile borders an O, it must also be an O.
+             If a tile is entirely surrounded by I's and P's, it must be an I.*/
         }
 
         public bool isPipe(char pipe)
