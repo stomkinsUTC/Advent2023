@@ -46,13 +46,16 @@ namespace Advent2023
             }
 
             long task1Total = 0;
+            long task2Total = 0;
             foreach (dataDifferences dd in dataDiffs)
             {
-                Console.WriteLine("Next num: " + dd.nums.Last());
+                //Console.WriteLine("Previous num: " + dd.nums.First());
                 task1Total += dd.nums.Last();
+                task2Total += dd.nums.First();
             }
 
             Console.WriteLine("Day 9 Task 1: " + task1Total);
+            Console.WriteLine("Day 9 Task 2: " + task2Total);
         }
     }
 
@@ -74,10 +77,12 @@ namespace Advent2023
             if (diffs != null)
             {
                 nums.Add(nums.Last() + diffs.nums.Last());
+                nums.Insert(0, nums[0] - diffs.nums[0]);
             }
             else
             {
-                nums.Add(nums.Last() + nums[nums.Count - 1] - nums[nums.Count - 2]);
+                nums.Add(nums[nums.Count - 1] + nums[nums.Count - 1] - nums[nums.Count - 2]);
+                nums.Insert(0, nums[0] + nums[0] - nums[1]);
             }
         }
 
