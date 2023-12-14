@@ -15,7 +15,7 @@ namespace Advent2023
         {
             //Getting the data from the file
             String line;
-            StreamReader sr = new StreamReader("..\\advent9TEST.txt");
+            StreamReader sr = new StreamReader("..\\advent9.txt");
             line = sr.ReadLine();
             while (line != null)
             {
@@ -37,17 +37,22 @@ namespace Advent2023
 
             for (int i = 0; i < dataDiffs.Count; i++)
             {
-                Console.WriteLine("Line: " + i);
+                //Console.WriteLine("Line: " + i);
                 dataDifferences tempDD = dataDiffs[i];
                 while (tempDD.diffs != null)
                 {
-                    Console.WriteLine("Difference found");
-                    /*Maybe need to add a property to the class here to store the next item.
-                     Next item is the sum of the last difference and the last num.
-                    This should then iterate up to the top level to get the difference.*/
                     tempDD = tempDD.diffs;
                 }
             }
+
+            long task1Total = 0;
+            foreach (dataDifferences dd in dataDiffs)
+            {
+                Console.WriteLine("Next num: " + dd.nums.Last());
+                task1Total += dd.nums.Last();
+            }
+
+            Console.WriteLine("Day 9 Task 1: " + task1Total);
         }
     }
 
@@ -66,6 +71,14 @@ namespace Advent2023
                 diffs = new dataDifferences(getDifferences(nums));
                 diffs.diffs = new dataDifferences(getDifferences(diffs.nums));
             }
+            if (diffs != null)
+            {
+                nums.Add(nums.Last() + diffs.nums.Last());
+            }
+            else
+            {
+                nums.Add(nums.Last() + nums[nums.Count - 1] - nums[nums.Count - 2]);
+            }
         }
 
         public List<long> getDifferences(List<long> inputNums)
@@ -73,7 +86,7 @@ namespace Advent2023
             List<long> tempDiffs = new List<long>();
             for (int i = 0; i < nums.Count - 1; i++)
             {
-                tempDiffs.Add(Math.Abs(nums[i] - nums[i + 1]));
+                tempDiffs.Add(nums[i + 1] - nums[i]);
             }
             return tempDiffs;
         }
