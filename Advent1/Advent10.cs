@@ -44,6 +44,10 @@ namespace Advent2023
             int[] prevPos = { col + 1, row };
             char startChar = 'F';
 
+            //Home
+            //int[] prevPos = { col, row - 1 };
+            //char startChar = 'J';
+
 
             /*Console.WriteLine("Previous at: " + prevPos[0] + ", " + prevPos[1]);
             Console.WriteLine("S found at: " + startPos[0] + ", " + startPos[1]);
