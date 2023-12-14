@@ -14,7 +14,7 @@ namespace Advent2023
         {
             //Getting the data from the file
             String line;
-            StreamReader sr = new StreamReader("..\\advent10TEST.txt");
+            StreamReader sr = new StreamReader("..\\advent10.txt");
             line = sr.ReadLine();
             while (line != null)
             {
@@ -23,8 +23,177 @@ namespace Advent2023
             }
             sr.Close();
 
-            pipe startPos = new pipe('F', 2, 0);
+            int col = 0;
+            int row = 0;
+            for (int i = 0; i < inputData.Count; i++)
+            {
+                for (int j = 0; j < inputData[0].Length; j++)
+                {
+                    if (inputData[i][j] == 'S')
+                    {
+                        col = i;
+                        row = j;
+                    }
+                }
+            }
+
+            int[] startPos = { col, row };
+
+            //THIS IS SPECIFIC TO THE "S" BEING AN "F"
+            int[] prevPos = { col + 1, row };
+            char startChar = 'F';
+
+
+            //NOT WORKING
+            Console.WriteLine("S found at: " + startPos[0] + ", " + startPos[1]);
+            Console.WriteLine("Previous at: " + prevPos[0] + ", " + prevPos[1]);
+
+            Console.WriteLine("Next at: " + getNextPos(startChar, startPos, prevPos)[0] + ", Col: " + getNextPos(startChar, startPos, prevPos)[1]);
         }
+
+        public bool isPipe(char pipe)
+        {
+            return "|-LJ7F".Contains(pipe);
+        }
+
+        public bool isStartOrEnd(char pipe)
+        {
+            return pipe == 'S';
+        }
+
+        public int[] getNextPos(char pipeChar, int[]currPos, int[] prevPos)
+        {
+            int[] nextPos = { -1, -1 };
+
+            if (pipeChar == '|')
+            {
+                if (prevPos[0] != currPos[0] - 1)
+                {
+                    if (currPos[0] - 1 >= 0)
+                    {
+                        nextPos[0] = currPos[0] - 1;
+                        nextPos[1] = currPos[1];
+                    }
+                }
+                else
+                {
+                    if (currPos[0] + 1 < inputData.Count())
+                    {
+                        nextPos[0] = currPos[0] + 1;
+                        nextPos[1] = currPos[1];
+                    }
+                }
+            }
+            else if (pipeChar == '-')
+            {
+                if (prevPos[1] != currPos[1] - 1)
+                {
+                    if (currPos[1] - 1 >= 0)
+                    {
+                        nextPos[0] = currPos[0];
+                        nextPos[1] = currPos[1] - 1;
+                    }
+                }
+                else
+                {
+                    if (currPos[1] + 1 < inputData.Count())
+                    {
+                        nextPos[0] = currPos[0];
+                        nextPos[1] = currPos[1] + 1;
+                    }
+                }
+            }
+            else if (pipeChar == 'L')
+            {
+                if (prevPos[0] != currPos[0] - 1)
+                {
+                    if (currPos[0] - 1 >= 0)
+                    {
+                        nextPos[0] = currPos[0] - 1;
+                        nextPos[1] = currPos[1];
+                    }
+                }
+                else
+                {
+                    if (currPos[1] + 1 < inputData.Count())
+                    {
+                        nextPos[0] = currPos[0];
+                        nextPos[1] = currPos[1] + 1;
+                    }
+                }
+            }
+            else if (pipeChar == 'J')
+            {
+                if (prevPos[0] != currPos[0] - 1)
+                {
+                    if (currPos[0] - 1 >= 0)
+                    {
+                        nextPos[0] = currPos[0] - 1;
+                        nextPos[1] = currPos[1];
+                    }
+                }
+                else
+                {
+                    if (currPos[1] - 1 >= 0)
+                    {
+                        nextPos[0] = currPos[0];
+                        nextPos[1] = currPos[1] - 1;
+                    }
+                }
+            }
+            else if (pipeChar == '7')
+            {
+                if (prevPos[0] != currPos[0] + 1)
+                {
+                    if (currPos[0] + 1 < inputData.Count())
+                    {
+                        nextPos[0] = currPos[0] + 1;
+                        nextPos[1] = currPos[1];
+                    }
+                }
+                else
+                {
+                    if (currPos[1] - 1 >= 0)
+                    {
+                        nextPos[0] = currPos[0];
+                        nextPos[1] = currPos[1] - 1;
+                    }
+                }
+            }
+            else if (pipeChar == 'F')
+            {
+                if (prevPos[0] != currPos[0] - 1)
+                {
+                    if (currPos[0] - 1 >= 0)
+                    {
+                        nextPos[0] = currPos[0] - 1;
+                        nextPos[1] = currPos[1];
+                    }
+                }
+                else
+                {
+                    if (currPos[1] + 1 < inputData.Count())
+                    {
+                        nextPos[0] = currPos[0];
+                        nextPos[1] = currPos[1] + 1;
+                    }
+                }
+            }
+
+            return nextPos;
+        }
+
+        public bool checkPipe(char pc, int col, int row)
+        {
+            bool validLoop = true;
+
+            
+
+            //Console.WriteLine("Pipe is: " + pc + ": " + validLoop + " at: " + y + ", " + x);
+
+            return validLoop;
+        }
+
     }
 
     internal class pipe
@@ -35,7 +204,7 @@ namespace Advent2023
 
         public pipe(char pc, int x, int y)
         {
-            pipeChar = pc;
+            /*pipeChar = pc;
             if (checkPipe(pc, x, y))
             {
                 Console.WriteLine("Valid pipe");
@@ -43,137 +212,10 @@ namespace Advent2023
             else
             {
                 //Console.WriteLine("Invalid pipe at: " + y + ", " + x);
-            }
+            }*/
         }
 
-        private bool checkPipe(char pc, int x, int y)
-        {
-            bool validLoop = true;
-
-            if (pc == '|')
-            {
-                if (y - 1 >= 0)
-                {
-                    first = new pipe(Advent10.inputData[y - 1][x], x, y);
-                }
-                else
-                {
-                    validLoop = false;
-                }
-                if (y + 1 < Advent10.inputData.Count())
-                {
-                    second = new pipe(Advent10.inputData[y + 1][x], x, y);
-                }
-                else
-                {
-                    validLoop = false;
-                }
-            }
-            else if (pc == '-')
-            {
-                if (x - 1 >= 0)
-                {
-                    first = new pipe(Advent10.inputData[y][x - 1], x, y);
-                }
-                else
-                {
-                    validLoop = false;
-                }
-                if (x + 1 < Advent10.inputData[0].Count())
-                {
-                    second = new pipe(Advent10.inputData[y][x + 1], x, y);
-                }
-                else
-                {
-                    validLoop = false;
-                }
-            }
-            else if (pc == 'L')
-            {
-                if (y - 1 >= 0)
-                {
-                    first = new pipe(Advent10.inputData[y - 1][x], x, y);
-                }
-                else
-                {
-                    validLoop = false;
-                }
-                if (x + 1 < Advent10.inputData[0].Count())
-                {
-                    second = new pipe(Advent10.inputData[y][x + 1], x, y);
-                }
-                else
-                {
-                    validLoop = false;
-                }
-            }
-            else if (pc == 'J')
-            {
-                if (y - 1 >= 0)
-                {
-                    first = new pipe(Advent10.inputData[y - 1][x], x, y);
-                }
-                else
-                {
-                    validLoop = false;
-                }
-                if (x - 1 >= 0)
-                {
-                    second = new pipe(Advent10.inputData[y][x - 1], x, y);
-                }
-                else
-                {
-                    validLoop = false;
-                }
-            }
-            else if (pc == '7')
-            {
-                if (y + 1 < Advent10.inputData.Count())
-                {
-                    first = new pipe(Advent10.inputData[y + 1][x], x, y);
-                }
-                else
-                {
-                    validLoop = false;
-                }
-                if (x - 1 >= 0)
-                {
-                    second = new pipe(Advent10.inputData[y][x - 1], x, y);
-                }
-                else
-                {
-                    validLoop = false;
-                }
-            }
-            else if (pc == 'F')
-            {
-                if (y + 1 < Advent10.inputData.Count())
-                {
-                    //ERROR
-                    first = new pipe(Advent10.inputData[y - 1][x], x, y);
-                }
-                else
-                {
-                    validLoop = false;
-                }
-                if (x + 1 < Advent10.inputData[0].Count())
-                {
-                    second = new pipe(Advent10.inputData[y][x + 1], x, y);
-                }
-                else
-                {
-                    validLoop = false;
-                }
-            }
-            else if (pc == '.')
-            {
-                validLoop = false;
-            }
-
-            Console.WriteLine("Pipe is: " + pc + ": " + validLoop + " at: " + y + ", " + x);
-
-            return validLoop;
-        }
+        
     }
 
 }
