@@ -38,17 +38,28 @@ namespace Advent2023
             }
 
             int[] startPos = { col, row };
+            int[] originalPos = startPos;
 
             //THIS IS SPECIFIC TO THE "S" BEING AN "F"
             int[] prevPos = { col + 1, row };
             char startChar = 'F';
 
 
-            //NOT WORKING
+            /*Console.WriteLine("Previous at: " + prevPos[0] + ", " + prevPos[1]);
             Console.WriteLine("S found at: " + startPos[0] + ", " + startPos[1]);
-            Console.WriteLine("Previous at: " + prevPos[0] + ", " + prevPos[1]);
+            Console.WriteLine("Next at: " + getNextPos(startChar, startPos, prevPos)[0] + ", " + getNextPos(startChar, startPos, prevPos)[1]);*/
 
-            Console.WriteLine("Next at: " + getNextPos(startChar, startPos, prevPos)[0] + ", Col: " + getNextPos(startChar, startPos, prevPos)[1]);
+            int[] nextPos = getNextPos(startChar, startPos, prevPos);
+            int stepsTaken = 0;
+            prevPos = startPos;
+            while (nextPos != startPos && !nextPos.Contains(-1))
+            {
+                int[] temp = nextPos;
+                nextPos = getNextPos(inputData[nextPos[0]][nextPos[1]], nextPos, prevPos);
+                prevPos = temp;
+                stepsTaken++;
+            }
+            Console.WriteLine("Day 10 Task 1: " + stepsTaken/2);
         }
 
         public bool isPipe(char pipe)
@@ -162,11 +173,11 @@ namespace Advent2023
             }
             else if (pipeChar == 'F')
             {
-                if (prevPos[0] != currPos[0] - 1)
+                if (prevPos[0] != currPos[0] + 1)
                 {
-                    if (currPos[0] - 1 >= 0)
+                    if (currPos[0] + 1 < inputData.Count())
                     {
-                        nextPos[0] = currPos[0] - 1;
+                        nextPos[0] = currPos[0] + 1;
                         nextPos[1] = currPos[1];
                     }
                 }
