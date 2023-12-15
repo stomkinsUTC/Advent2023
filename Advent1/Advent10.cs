@@ -95,7 +95,7 @@ namespace Advent2023
                         }
                     }
                 }
-            }
+            } 
 
             int task2Count = 0;
             for (int mCol = 0; mCol < modifiedData.Count; mCol++)
