@@ -9,6 +9,7 @@ namespace Advent2023
     internal class Advent10
     {
         public static List<string> inputData = new List<string>();
+        public static List<StringBuilder> modifiedData = new List<StringBuilder>();
 
         public void main()
         {
@@ -19,6 +20,7 @@ namespace Advent2023
             while (line != null)
             {
                 inputData.Add(line);
+                modifiedData.Add(new StringBuilder(line));
                 line = sr.ReadLine();
             }
             sr.Close();
@@ -64,6 +66,42 @@ namespace Advent2023
                 stepsTaken++;
             }
             Console.WriteLine("Day 10 Task 1: " + stepsTaken/2);
+
+            int changeCount = 1;
+            while (changeCount > 0)
+            {
+                changeCount = 0;
+                for (int mCol = 0; mCol < modifiedData.Count; mCol++)
+                {
+                    for (int mRow = 0; mRow < modifiedData[0].Length; mRow++)
+                    {
+                        if (isO(mCol, mRow))
+                        {
+                            changeCount++;
+                        }
+                    }
+                }
+            }
+
+            int task2Count = 0;
+            for (int mCol = 0; mCol < modifiedData.Count; mCol++)
+            {
+                for (int mRow = 0; mRow < modifiedData[0].Length; mRow++)
+                {
+                    if (modifiedData[mCol][mRow] == '.')
+                    {
+                        modifiedData[mCol][mRow] = 'I';
+                        task2Count++;
+                    }
+                }
+            }
+
+            Console.WriteLine("Day 10 Task 2: " + task2Count);
+
+            /*foreach (StringBuilder id in modifiedData)
+            {
+                Console.WriteLine(id);
+            }*/
 
 
             /*For Task 2, set up a 2D array to store whether each tile is:
@@ -207,39 +245,97 @@ namespace Advent2023
             return nextPos;
         }
 
-        public bool checkPipe(char pc, int col, int row)
+        public bool isO(int col, int row)
         {
-            bool validLoop = true;
-
-            
-
-            //Console.WriteLine("Pipe is: " + pc + ": " + validLoop + " at: " + y + ", " + x);
-
-            return validLoop;
-        }
-
-    }
-
-    internal class pipe
-    {
-        Char pipeChar;
-        public pipe first;
-        public pipe second;
-
-        public pipe(char pc, int x, int y)
-        {
-            /*pipeChar = pc;
-            if (checkPipe(pc, x, y))
+            bool changeMade = false;
+            if (modifiedData[col][row] == '.')
             {
-                Console.WriteLine("Valid pipe");
+                if (col == 0 || col == modifiedData.Count - 1 || row == 0 || row == modifiedData[0].Length - 1)
+                {
+                    modifiedData[col][row] = 'O';
+                    changeMade = true;
+                }
             }
-            else
+            else if (modifiedData[col][row] == 'O')
             {
-                //Console.WriteLine("Invalid pipe at: " + y + ", " + x);
-            }*/
+                if (col + 1 < modifiedData.Count && modifiedData[col + 1][row] == '.')
+                {
+                    modifiedData[col + 1][row] = 'O';
+                    changeMade = true;
+                }
+                if (col - 1 >= 0 && modifiedData[col - 1][row] == '.')
+                {
+                    modifiedData[col - 1][row] = 'O';
+                    changeMade = true;
+                }
+                if (row + 1 < modifiedData[0].Length && modifiedData[col][row + 1] == '.')
+                {
+                    modifiedData[col][row + 1] = 'O';
+                    changeMade = true;
+                }
+                if (row - 1 >= 0 && modifiedData[col][row - 1] == '.')
+                {
+                    modifiedData[col][row - 1] = 'O';
+                    changeMade = true;
+                }
+
+                if (col + 3 < modifiedData.Count && modifiedData[col + 3][row] == '.')
+                {
+                    if ((isPipe(modifiedData[col + 2][row]) || isStartOrEnd(modifiedData[col + 2][row])) && (isPipe(modifiedData[col + 1][row]) || isStartOrEnd(modifiedData[col + 1][row])))
+                    {
+                        modifiedData[col + 3][row] = 'O';
+                        changeMade = true;
+                    }
+                    else
+                    {
+                        modifiedData[col + 3][row] = 'I';
+                        changeMade = true;
+                    }
+                }
+                if (col - 3 >= 0 && modifiedData[col - 3][row] == '.')
+                {
+                    if ((isPipe(modifiedData[col - 2][row]) || isStartOrEnd(modifiedData[col - 2][row])) && (isPipe(modifiedData[col - 1][row]) || isStartOrEnd(modifiedData[col - 1][row])))
+                    {
+                        modifiedData[col - 3][row] = 'O';
+                        changeMade = true;
+                    }
+                    else
+                    {
+                        modifiedData[col - 3][row] = 'I';
+                        changeMade = true;
+                    }
+                }
+                if (row + 3 < modifiedData[0].Length && modifiedData[col][row + 3] == '.')
+                {
+                    if ((isPipe(modifiedData[col][row + 2]) || isStartOrEnd(modifiedData[col][row + 2])) && (isPipe(modifiedData[col][row + 1]) || isStartOrEnd(modifiedData[col][row + 1])))
+                    {
+                        modifiedData[col][row + 3] = 'O';
+                        changeMade = true;
+                    }
+                    else
+                    {
+                        modifiedData[col][row + 3] = 'I';
+                        changeMade = true;
+                    }
+                }
+                if (row - 3 >= 0 && modifiedData[col][row - 3] == '.')
+                {
+                    if ((isPipe(modifiedData[col][row - 2]) || isStartOrEnd(modifiedData[col][row - 2])) && (isPipe(modifiedData[col][row - 1]) || isStartOrEnd(modifiedData[col][row - 1])))
+                    {
+                        modifiedData[col][row - 3] = 'O';
+                        changeMade = true;
+                    }
+                    else
+                    {
+                        modifiedData[col][row - 3] = 'I';
+                        changeMade = true;
+                    }
+                }
+
+            }
+            return changeMade;
         }
 
-        
     }
 
 }
