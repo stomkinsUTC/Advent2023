@@ -10,17 +10,19 @@ namespace Advent2023
     {
         public static List<string> inputData = new List<string>();
         public static List<StringBuilder> modifiedData = new List<StringBuilder>();
+        public List<List<bool>> partOfPipe = new List<List<bool>>();
 
         public void main()
         {
             //Getting the data from the file
             String line;
-            StreamReader sr = new StreamReader("..\\advent10.txt");
+            StreamReader sr = new StreamReader("..\\advent10TEST.txt");
             line = sr.ReadLine();
             while (line != null)
             {
                 inputData.Add(line);
                 modifiedData.Add(new StringBuilder(line));
+                partOfPipe.Add(new List<bool>());
                 line = sr.ReadLine();
             }
             sr.Close();
@@ -31,10 +33,16 @@ namespace Advent2023
             {
                 for (int j = 0; j < inputData[0].Length; j++)
                 {
+                    
                     if (inputData[i][j] == 'S')
                     {
                         col = i;
                         row = j;
+                        partOfPipe[i].Add(true);
+                    }
+                    else
+                    {
+                        partOfPipe[i].Add(false);
                     }
                 }
             }
@@ -42,18 +50,23 @@ namespace Advent2023
             int[] startPos = { col, row };
             int[] originalPos = startPos;
 
-            //THIS IS SPECIFIC TO THE "S" BEING AN "F"
+            //Work - Main code
+            //int[] prevPos = { col + 1, row };
+            //char startChar = 'F';
+
+            //Work - Test code
             int[] prevPos = { col + 1, row };
             char startChar = 'F';
+            partOfPipe[col + 1][row] = true;
 
             //Home
             //int[] prevPos = { col, row - 1 };
             //char startChar = 'J';
 
 
-            /*Console.WriteLine("Previous at: " + prevPos[0] + ", " + prevPos[1]);
+            Console.WriteLine("Previous at: " + prevPos[0] + ", " + prevPos[1]);
             Console.WriteLine("S found at: " + startPos[0] + ", " + startPos[1]);
-            Console.WriteLine("Next at: " + getNextPos(startChar, startPos, prevPos)[0] + ", " + getNextPos(startChar, startPos, prevPos)[1]);*/
+            Console.WriteLine("Next at: " + getNextPos(startChar, startPos, prevPos)[0] + ", " + getNextPos(startChar, startPos, prevPos)[1]);
 
             int[] nextPos = getNextPos(startChar, startPos, prevPos);
             int stepsTaken = 0;
@@ -62,6 +75,7 @@ namespace Advent2023
             {
                 int[] temp = nextPos;
                 nextPos = getNextPos(inputData[nextPos[0]][nextPos[1]], nextPos, prevPos);
+                partOfPipe[prevPos[0]][prevPos[1]] = true;
                 prevPos = temp;
                 stepsTaken++;
             }
@@ -98,19 +112,10 @@ namespace Advent2023
 
             Console.WriteLine("Day 10 Task 2: " + task2Count);
 
-            /*foreach (StringBuilder id in modifiedData)
+            foreach (StringBuilder id in modifiedData)
             {
                 Console.WriteLine(id);
-            }*/
-
-
-            /*For Task 2, set up a 2D array to store whether each tile is:
-             I - Inside
-             O - Outside
-             P - Pipe
-             If a tile borders an edge and isn't a pipe, it must be O.
-             If a tile borders an O, it must also be an O.
-             If a tile is entirely surrounded by I's and P's, it must be an I.*/
+            }
         }
 
         public bool isPipe(char pipe)
@@ -248,38 +253,43 @@ namespace Advent2023
         public bool isO(int col, int row)
         {
             bool changeMade = false;
-            if (modifiedData[col][row] == '.')
+            if (!partOfPipe[col][row])
             {
                 if (col == 0 || col == modifiedData.Count - 1 || row == 0 || row == modifiedData[0].Length - 1)
                 {
                     modifiedData[col][row] = 'O';
                     changeMade = true;
+                    partOfPipe[col][row] = true;
                 }
             }
             else if (modifiedData[col][row] == 'O')
             {
-                if (col + 1 < modifiedData.Count && modifiedData[col + 1][row] == '.')
+                if (col + 1 < modifiedData.Count && !partOfPipe[col + 1][row])
                 {
                     modifiedData[col + 1][row] = 'O';
                     changeMade = true;
+                    partOfPipe[col + 1][row] = true;
                 }
-                if (col - 1 >= 0 && modifiedData[col - 1][row] == '.')
+                if (col - 1 >= 0 && !partOfPipe[col - 1][row])
                 {
                     modifiedData[col - 1][row] = 'O';
                     changeMade = true;
+                    partOfPipe[col - 1][row] = true;
                 }
-                if (row + 1 < modifiedData[0].Length && modifiedData[col][row + 1] == '.')
+                if (row + 1 < modifiedData[0].Length && !partOfPipe[col][row + 1])
                 {
                     modifiedData[col][row + 1] = 'O';
                     changeMade = true;
+                    partOfPipe[col][row + 1] = true;
                 }
-                if (row - 1 >= 0 && modifiedData[col][row - 1] == '.')
+                if (row - 1 >= 0 && !partOfPipe[col][row - 1])
                 {
                     modifiedData[col][row - 1] = 'O';
                     changeMade = true;
+                    partOfPipe[col][row - 1] = true;
                 }
 
-                if (col + 3 < modifiedData.Count && modifiedData[col + 3][row] == '.')
+                if (col + 3 < modifiedData.Count && !isPipe(modifiedData[col + 3][row]))
                 {
                     if ((isPipe(modifiedData[col + 2][row]) || isStartOrEnd(modifiedData[col + 2][row])) && (isPipe(modifiedData[col + 1][row]) || isStartOrEnd(modifiedData[col + 1][row])))
                     {
@@ -292,7 +302,7 @@ namespace Advent2023
                         changeMade = true;
                     }
                 }
-                if (col - 3 >= 0 && modifiedData[col - 3][row] == '.')
+                if (col - 3 >= 0 && !isPipe(modifiedData[col - 3][row]))
                 {
                     if ((isPipe(modifiedData[col - 2][row]) || isStartOrEnd(modifiedData[col - 2][row])) && (isPipe(modifiedData[col - 1][row]) || isStartOrEnd(modifiedData[col - 1][row])))
                     {
@@ -305,7 +315,7 @@ namespace Advent2023
                         changeMade = true;
                     }
                 }
-                if (row + 3 < modifiedData[0].Length && modifiedData[col][row + 3] == '.')
+                if (row + 3 < modifiedData[0].Length && !isPipe(modifiedData[col][row + 3]))
                 {
                     if ((isPipe(modifiedData[col][row + 2]) || isStartOrEnd(modifiedData[col][row + 2])) && (isPipe(modifiedData[col][row + 1]) || isStartOrEnd(modifiedData[col][row + 1])))
                     {
@@ -318,7 +328,7 @@ namespace Advent2023
                         changeMade = true;
                     }
                 }
-                if (row - 3 >= 0 && modifiedData[col][row - 3] == '.')
+                if (row - 3 >= 0 && !isPipe(modifiedData[col][row - 3]))
                 {
                     if ((isPipe(modifiedData[col][row - 2]) || isStartOrEnd(modifiedData[col][row - 2])) && (isPipe(modifiedData[col][row - 1]) || isStartOrEnd(modifiedData[col][row - 1])))
                     {
