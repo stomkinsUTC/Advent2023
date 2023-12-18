@@ -12,6 +12,8 @@ namespace Advent2023
         public List<int> galaxyX = new List<int>();
         public List<int> galaxyY = new List<int>();
 
+        public List<int> verticalPoints = new List<int>();
+
         bool task1 = true;
         bool task2 = false;
 
@@ -19,7 +21,7 @@ namespace Advent2023
         {
             //Getting the data from the file
             String line;
-            StreamReader sr = new StreamReader("..\\advent11.txt");
+            StreamReader sr = new StreamReader("..\\advent11TEST.txt");
             line = sr.ReadLine();
             while (line != null)
             {
@@ -30,8 +32,13 @@ namespace Advent2023
 
             //True for task 1, false for task 2
             
-            ExpandUniverse(task2);
+            ExpandUniverse(task1);
             FindGalaxies();
+
+            foreach (string l in inputData)
+            {
+                Console.WriteLine(l);
+            }
 
             //Console.WriteLine("Unique Pairs: " + (galaxyX.Count() * (galaxyX.Count() - 1)) / 2);
 
@@ -61,9 +68,10 @@ namespace Advent2023
             if (task1)
             {
                 ExpandHorizontally(1);
-                RotateUniverse(true);
+                ExpandVertically(1);
+                /*RotateUniverse(true);
                 ExpandHorizontally(1);
-                RotateUniverse(false);
+                RotateUniverse(false);*/
             }
             else
             {
@@ -98,6 +106,38 @@ namespace Advent2023
             {
                 inputData.Insert(index, lineToAdd);
             }
+        }
+
+        public void IdentifyVerticals()
+        {
+            for (int i = 0; i < inputData[0].Length; i++)
+            {
+                StringBuilder tempStr = new StringBuilder("");
+                for (int j = 0; j < inputData.Count; j++)
+                {
+                    tempStr.Append(inputData[j][i]);
+                }
+                if (!tempStr.ToString().Contains("#"))
+                {
+                    verticalPoints.Add(i);
+                }
+            }
+        }
+
+        public void ExpandVertically(int expansion)
+        {
+            IdentifyVerticals();
+            List<int> tempExpansion = new List<int>();
+            int expandCount = 0;
+            foreach (int i in verticalPoints)
+            {
+                for (int expand = 0; expand < expansion; expand++)
+                {
+                    tempExpansion.Add(i + expand + expansion);
+                }
+            }
+
+            //NEED TO ITERATE THROUGH THE INPUTDATA, ADDING A NEW CHAR AT EACH INDEX IN TEMPEXPANSION, I THINK
         }
 
         //CHANGE THIS, THIS IS WHAT IS KILLING THE PROGRAM
