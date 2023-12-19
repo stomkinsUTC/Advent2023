@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,19 +10,19 @@ namespace Advent2023
     internal class Advent11
     {
         public static List<string> inputData = new List<string>();
+        public static List<string> backupData = new List<string>();
         public List<int> galaxyX = new List<int>();
         public List<int> galaxyY = new List<int>();
 
         public List<int> verticalPoints = new List<int>();
 
-        bool task1 = true;
-        bool task2 = false;
+        public int expansionAmount = 0;
 
         public void main()
         {
             //Getting the data from the file
             String line;
-            StreamReader sr = new StreamReader("..\\advent11TEST.txt");
+            StreamReader sr = new StreamReader("..\\advent11.txt");
             line = sr.ReadLine();
             while (line != null)
             {
@@ -29,36 +30,76 @@ namespace Advent2023
                 line = sr.ReadLine();
             }
             sr.Close();
+            backupData = inputData;
 
             //True for task 1, false for task 2
+            bool task1 = false;
             
-            ExpandUniverse(task1);
-            FindGalaxies();
-
-            foreach (string l in inputData)
-            {
-                Console.WriteLine(l);
-            }
-
-            //Console.WriteLine("Unique Pairs: " + (galaxyX.Count() * (galaxyX.Count() - 1)) / 2);
-
-            long galaxyTotal = 0;
-            for (int i = 0; i < galaxyX.Count -1; i++)
-            {
-                for (int j = i + 1; j < galaxyX.Count; j++)
-                {
-                    //Console.WriteLine("Combination: " + i + ", " + j);
-                    galaxyTotal += (Math.Abs(galaxyX[i] - galaxyX[j]) + Math.Abs(galaxyY[i] - galaxyY[j]));
-                }
-            }
+            
             if (task1)
             {
+                ExpandUniverse(true);
+                FindGalaxies();
+
+                long galaxyTotal = 0;
+                for (int i = 0; i < galaxyX.Count - 1; i++)
+                {
+                    for (int j = i + 1; j < galaxyX.Count; j++)
+                    {
+                        //Console.WriteLine("Combination: " + i + ", " + j);
+                        galaxyTotal += (Math.Abs(galaxyX[i] - galaxyX[j]) + Math.Abs(galaxyY[i] - galaxyY[j]));
+                    }
+                }
                 Console.WriteLine("Day 11 Task 1: " + galaxyTotal);
             }
             else
             {
-                Console.WriteLine("Day 11 Task 2: " + galaxyTotal);
+                Console.WriteLine("Day 11 Task 2: " + findPointForEquation());
             }
+        }
+
+        public long findPointForEquation()
+        {
+            ExpandUniverse(false);
+            FindGalaxies();
+
+            long yFor0 = 0;
+            for (int i = 0; i < galaxyX.Count - 1; i++)
+            {
+                for (int j = i + 1; j < galaxyX.Count; j++)
+                {
+                    yFor0 += (Math.Abs(galaxyX[i] - galaxyX[j]) + Math.Abs(galaxyY[i] - galaxyY[j]));
+                }
+            }
+            inputData = backupData;
+            galaxyX = new List<int>();
+            galaxyY = new List<int>();
+            verticalPoints = new List<int>();
+
+            expansionAmount++;
+
+            ExpandUniverse(false);
+            FindGalaxies();
+
+            long yFor1 = 0;
+            for (int i = 0; i < galaxyX.Count - 1; i++)
+            {
+                for (int j = i + 1; j < galaxyX.Count; j++)
+                {
+                    yFor1 += (Math.Abs(galaxyX[i] - galaxyX[j]) + Math.Abs(galaxyY[i] - galaxyY[j]));
+                }
+            }
+
+            Console.WriteLine("0: " + yFor0);
+            Console.WriteLine("1: " + yFor1);
+            //Enter these values into Wolfram Alpha in the form of (0, total)(1, total) equation
+            Console.Write("Enter the X multiplier: ");
+            long xMult = long.Parse(Console.ReadLine());
+            Console.Write("Enter the addition: ");
+            long addition = long.Parse(Console.ReadLine());
+
+
+            return (xMult * 999999) + addition;
         }
 
         /*Expand horizontally, then rotate 90 degrees.
@@ -68,17 +109,17 @@ namespace Advent2023
             if (task1)
             {
                 ExpandHorizontally(1);
-                ExpandVertically(1);
-                /*RotateUniverse(true);
+                RotateUniverse(true);
                 ExpandHorizontally(1);
-                RotateUniverse(false);*/
+                RotateUniverse(false);
             }
             else
             {
-                ExpandHorizontally(999999);
-                RotateUniverse(true);
-                ExpandHorizontally(999999);
-                RotateUniverse(false);
+                IdentifyVerticals();
+                ExpandHorizontally(expansionAmount);
+                ExpandVertically(expansionAmount);
+
+                /**/
             }
         }
 
@@ -87,10 +128,10 @@ namespace Advent2023
             List<int> rowIndexes = new List<int>();
             int rowOffset = 0;
             string lineToAdd = "";
-            Console.WriteLine("Expanding:");
+            //Console.WriteLine("Expanding:");
             for (int i = 0; i < inputData.Count; i++)
             {
-                Console.WriteLine(i + "/" + (inputData.Count - 1));
+                //Console.WriteLine(i + "/" + (inputData.Count - 1));
                 if (!inputData[i].Contains('#'))
                 {
                     for (int j = 0; j < expansion; j++)
@@ -126,21 +167,26 @@ namespace Advent2023
 
         public void ExpandVertically(int expansion)
         {
-            IdentifyVerticals();
-            List<int> tempExpansion = new List<int>();
-            int expandCount = 0;
-            foreach (int i in verticalPoints)
+            StringBuilder sbToAppend = new StringBuilder();
+            for (int i = 0; i < expansion; i++)
             {
-                for (int expand = 0; expand < expansion; expand++)
+                sbToAppend.Append(".");
+            }    
+            string toAppend = sbToAppend.ToString();
+
+            for (int line = 0; line < inputData.Count; line++)
+            {
+                int appendedCount = 0;
+                foreach (int point in verticalPoints)
                 {
-                    tempExpansion.Add(i + expand + expansion);
+                    int index = point + (appendedCount * expansion);
+                    inputData[line] = new StringBuilder(inputData[line].Insert(index, toAppend)).ToString();
+                    appendedCount++;
                 }
             }
-
-            //NEED TO ITERATE THROUGH THE INPUTDATA, ADDING A NEW CHAR AT EACH INDEX IN TEMPEXPANSION, I THINK
         }
 
-        //CHANGE THIS, THIS IS WHAT IS KILLING THE PROGRAM
+        //CHANGE THIS, THIS IS WHAT IS KILLING THE PROGRAM IN TASK 2
         /*Lazy way to rotate the list counterclockwise, but it works.*/
         public void RotateUniverse(bool clockwise)
         {
